@@ -63,7 +63,11 @@ struct ContentView: View {
                         library: library,
                         leaveEditor: focusNoteList
                     )
-                    .frame(minWidth: 440, maxHeight: .infinity)
+                    .frame(
+                        minWidth: 440,
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
             }

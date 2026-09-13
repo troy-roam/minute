@@ -54,6 +54,7 @@ struct ArchiveEditorView: View {
             } actions: {
                 Button("New Note", action: library.addCard)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
     }
 
