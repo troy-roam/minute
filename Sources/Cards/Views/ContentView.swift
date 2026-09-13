@@ -43,6 +43,7 @@ struct ContentView: View {
             HSplitView {
                 NoteListPane(
                     cards: visibleCards,
+                    isSearching: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                     selection: Binding(
                         get: { library.selectedCardID },
                         set: { library.selectedCardID = $0 }
@@ -58,7 +59,9 @@ struct ContentView: View {
                 )
                     .frame(minWidth: 440)
             }
+            .frame(maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
         .navigationTitle("minute")
         .onReceive(NotificationCenter.default.publisher(for: .focusMinuteSearch)) { _ in
@@ -69,7 +72,7 @@ struct ContentView: View {
             library.selectedCardID = requestedID
             library.focusRequestID = nil
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        .overlay(alignment: .bottom) {
             if let deletedNoteName = library.deletedNoteName {
                 HStack(spacing: 12) {
                     Text("Moved \(deletedNoteName) to Trash")
@@ -87,8 +90,10 @@ struct ContentView: View {
                 .padding(.horizontal, 12)
                 .frame(height: 34)
                 .background(.bar)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(.easeOut(duration: 0.16), value: library.deletedNoteName)
         .alert("minute", isPresented: errorIsPresented) {
             Button("OK") { library.lastError = nil }
         } message: {
@@ -183,6 +188,7 @@ private struct SearchBar: View {
 
 private struct NoteListPane: View {
     let cards: [NoteCard]
+    let isSearching: Bool
     @Binding var selection: NoteCard.ID?
     @FocusState.Binding var isFocused: Bool
     let deleteNote: (NoteCard.ID) -> Void
@@ -210,7 +216,15 @@ private struct NoteListPane: View {
         .focused($isFocused)
         .overlay {
             if cards.isEmpty {
-                ContentUnavailableView.search
+                if isSearching {
+                    ContentUnavailableView.search
+                } else {
+                    ContentUnavailableView {
+                        Label("No Notes", systemImage: "tray")
+                    } description: {
+                        Text("Create a new note with ⌘N.")
+                    }
+                }
             }
         }
     }
