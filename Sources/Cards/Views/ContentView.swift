@@ -40,26 +40,33 @@ struct ContentView: View {
 
             Divider()
 
-            HSplitView {
-                NoteListPane(
-                    cards: visibleCards,
-                    isSearching: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                    selection: Binding(
-                        get: { library.selectedCardID },
-                        set: { library.selectedCardID = $0 }
-                    ),
-                    isFocused: $noteListIsFocused,
-                    deleteNote: library.deleteCard
-                )
-                .frame(minWidth: 240, idealWidth: 300, maxWidth: 340)
+            GeometryReader { geometry in
+                HSplitView {
+                    NoteListPane(
+                        cards: visibleCards,
+                        isSearching: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                        selection: Binding(
+                            get: { library.selectedCardID },
+                            set: { library.selectedCardID = $0 }
+                        ),
+                        isFocused: $noteListIsFocused,
+                        deleteNote: library.deleteCard
+                    )
+                    .frame(
+                        minWidth: 240,
+                        idealWidth: 300,
+                        maxWidth: 340,
+                        maxHeight: .infinity
+                    )
 
-                ArchiveEditorView(
-                    library: library,
-                    leaveEditor: focusNoteList
-                )
-                    .frame(minWidth: 440)
+                    ArchiveEditorView(
+                        library: library,
+                        leaveEditor: focusNoteList
+                    )
+                    .frame(minWidth: 440, maxHeight: .infinity)
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
             }
-            .frame(maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
