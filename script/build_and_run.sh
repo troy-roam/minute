@@ -20,8 +20,14 @@ APP_BINARY="$APP_MACOS/$APP_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
 APP_ICON_SOURCE="$ROOT_DIR/Resources/minute.icns"
 
-pkill -x "$APP_NAME" >/dev/null 2>&1 || true
-pkill -x "Cards" >/dev/null 2>&1 || true
+case "$MODE" in
+  --stage|stage)
+    ;;
+  *)
+    pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+    pkill -x "Cards" >/dev/null 2>&1 || true
+    ;;
+esac
 
 BUILD_ARGS=(--package-path "$ROOT_DIR" -c "$BUILD_CONFIGURATION")
 if [[ "$BUILD_UNIVERSAL" == "1" ]]; then
