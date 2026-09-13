@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct ArchiveEditorView: View {
     let library: LibraryStore
     let leaveEditor: () -> Void

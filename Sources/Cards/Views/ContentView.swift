@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
     @Bindable var library: LibraryStore
     @State private var query = ""
